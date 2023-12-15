@@ -6,7 +6,7 @@
   <link href="http://example.com/atom.xml" rel="self"/>
   
   <link href="http://example.com/"/>
-  <updated>2023-11-13T07:10:23.087Z</updated>
+  <updated>2023-12-15T05:26:28.657Z</updated>
   <id>http://example.com/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>黑客编程（一）：简易端口扫</title>
+    <link href="http://example.com/2023/12/15/New/"/>
+    <id>http://example.com/2023/12/15/New/</id>
+    <published>2023-12-14T16:00:00.000Z</published>
+    <updated>2023-12-15T05:26:28.657Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="黑客编程-—简单端口扫工具"><a href="#黑客编程-—简单端口扫工具" class="headerlink" title="黑客编程 —简单端口扫工具"></a>黑客编程 —简单端口扫工具</h1><p>前言：开发永远是最需要去学习的东西！对于网络安全来说更是如此，本末倒置的无脑脚本跑是没有任何技术的！！</p><h2 id="脚本详情（注释版）"><a href="#脚本详情（注释版）" class="headerlink" title="脚本详情（注释版）"></a>脚本详情（注释版）</h2> <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">#!/usr/bin/python3</span></span><br><span class="line"><span class="keyword">import</span> pyfiglet</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"><span class="keyword">from</span> datetime <span class="keyword">import</span> datetime</span><br><span class="line"></span><br><span class="line">ascii_banner = pyfiglet.figlet_format(<span class="string">&quot;PORT SCANNER&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(ascii_banner)<span class="comment">#打印艺术字</span></span><br><span class="line"></span><br><span class="line">target = <span class="string">&quot;10.120.132.137&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;-&quot;</span>* <span class="number">50</span> )</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Scannering Target: &quot;</span>+target)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;Scannering started at: &quot;</span>+<span class="built_in">str</span>(datetime.now()))<span class="comment">#打印当前扫描时间</span></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;_&quot;</span>*<span class="number">50</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    <span class="keyword">for</span> port <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">500</span>):<span class="comment">#端口扫描范围在1~499</span></span><br><span class="line">        s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)</span><br><span class="line">        socket.setdefaulttimeout(<span class="number">1</span>)<span class="comment">#设置默认超时时间为1秒钟</span></span><br><span class="line"></span><br><span class="line">        result=s.connect_ex((target,port))</span><br><span class="line">        <span class="keyword">if</span> result ==<span class="number">0</span>:<span class="comment">#如果程序正确，打印下列内容</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;Port &#123;&#125; is open&quot;</span>.<span class="built_in">format</span>(port))<span class="comment">#将存在端口打印</span></span><br><span class="line">        s.close()</span><br><span class="line"><span class="keyword">except</span> KeyboardInterrupt:<span class="comment">#如果用户按下键盘中断键，打印消息并退出</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\n Exiting Program !!!!&quot;</span>)</span><br><span class="line">    sys.exit()</span><br><span class="line"><span class="keyword">except</span> socket.gaierror:<span class="comment">#无法解析，打印相关内容并退出</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\n Hostname Could Not Be Resolved !!!!&quot;</span>)</span><br><span class="line">    sys.exit()</span><br><span class="line"><span class="keyword">except</span> socket.error:<span class="comment">#主机未响应，打印相关内容并退出</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;\ Server not responding !!!!&quot;</span>)</span><br><span class="line">    sys.exit()</span><br></pre></td></tr></table></figure>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;h1 id=&quot;黑客编程-—简单端口扫工具&quot;&gt;&lt;a href=&quot;#黑客编程-—简单端口扫工具&quot; class=&quot;headerlink&quot; title=&quot;黑客编程 —简单端口扫工具&quot;&gt;&lt;/a&gt;黑客编程 —简单端口扫工具&lt;/h1&gt;&lt;p&gt;前言：开发永远是最需要去学习的东西！对于网络安全来说</summary>
+      
+    
+    
+    
+    <category term="blog" scheme="http://example.com/categories/blog/"/>
+    
+    
+    <category term="hexo" scheme="http://example.com/tags/hexo/"/>
+    
+  </entry>
   
   <entry>
     <title>Hello World</title>
